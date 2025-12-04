@@ -47,7 +47,8 @@ athletes_df = athletes_df.merge(
     data['nocs'][['code', 'country', 'continent']],
     left_on='country_code',
     right_on='code',
-    how='left'
+    how='left',
+    suffixes=('_src', '')
 )
 
 # Create athlete search
