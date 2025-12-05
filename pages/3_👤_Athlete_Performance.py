@@ -362,7 +362,7 @@ with col1:
     if len(athletes_analysis) > 0:
         avg_age = athletes_analysis['age'].mean() if 'age' in athletes_analysis.columns else 0
         st.metric("Average Age", f"{avg_age:.1f} years" if avg_age > 0 else "N/A")
-
+ 
 with col2:
     male_count = len(athletes_analysis[athletes_analysis['gender'].isin(['Male', 'M'])])
     female_count = len(athletes_analysis[athletes_analysis['gender'].isin(['Female', 'F'])])
