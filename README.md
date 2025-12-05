@@ -156,8 +156,16 @@ This dashboard fulfills all mandatory requirements:
 
 This project was created as part of the SEDS Streamlit Challenge for the LA28 Volunteer Selection process.
 
-**Course**: Software Engineering for Data Science  
-**Instructor**: Dr. Belkacem KHALDI
+**Team Members**
+
+- Khedim Youcef
+- Bensetallah Soufiane
+- Zitouni Ahmed
+- Houari Mohamed
+  **group** 1
+  **sepciality** AIDS
+  **Course**: Software Engineering for Data Science  
+  **Instructor**: Dr. Belkacem KHALDI
 
 ## 🔧 Troubleshooting
 
