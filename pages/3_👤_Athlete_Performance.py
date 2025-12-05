@@ -110,6 +110,20 @@ if selected_athlete:
                 st.markdown(f"- {event}")
             if len(events_list) > 5:
                 st.markdown(f"*...and {len(events_list)-5} more*")
+
+    # Display Coach Information
+    coach_info = athlete_info.get('coach', '')
+    if pd.notna(coach_info) and coach_info:
+        st.markdown("### 🧢 Coaching Staff")
+        # Handle multiple coaches often separated by <br> or newlines in some datasets, 
+        # though in this CSV it seems to be a single string or comma separated.
+        # We'll split by <br> if present, otherwise treat as one block.
+        coaches = str(coach_info).replace('<br>', '\n').split('\n')
+        
+        for coach in coaches:
+            coach = coach.strip()
+            if coach:
+                st.markdown(f"- {coach}")
     
     st.markdown("---")
 
