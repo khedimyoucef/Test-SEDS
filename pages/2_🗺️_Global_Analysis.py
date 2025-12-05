@@ -10,6 +10,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.data_loader import load_all_data
 from utils.filters import create_sidebar_filters, get_filter_summary
+from utils.ioc_iso_mapping import get_iso_code
 
 # Page configuration
 st.set_page_config(
@@ -53,6 +54,9 @@ if filters['continents']:
 # Calculate total medals
 medals_df['total_medals'] = medals_df['Gold Medal'] + medals_df['Silver Medal'] + medals_df['Bronze Medal']
 
+# Add ISO codes for map
+medals_df['iso_code'] = medals_df['country_code'].apply(get_iso_code)
+
 # 1. World Medal Map (Choropleth)
 st.header("🌍 World Medal Map")
 st.markdown("Countries colored by their total medal count")
@@ -60,7 +64,7 @@ st.markdown("Countries colored by their total medal count")
 # Create choropleth map
 fig_map = px.choropleth(
     medals_df,
-    locations='country_code',
+    locations='iso_code',
     locationmode='ISO-3',
     color='total_medals',
     hover_name='country',
