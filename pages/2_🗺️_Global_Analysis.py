@@ -229,6 +229,13 @@ continent_medals = medals_df.groupby('continent').agg({
     'Silver Medal': 'sum',
     'Bronze Medal': 'sum'
 }).reset_index()
+# reset_index() is needed here because the 'continent' column, after groupby(),
+# becomes the DataFrame's index. The subsequent .melt() operation expects
+# 'continent' to be a regular column, specified by id_vars='continent'.
+# Without reset_index(), 'continent' would not be found as a column for id_vars.
+# If reset_index() were omi tted, you would need to use `continent_medals.index.name`
+# or similar to access the continent values, or reset the index before melting.
+# For clarity and direct use with id_vars, reset_index() is appropriate.
 
 # "Melt" the DataFrame from wide to long format for a grouped bar chart
 # Wide format: one column per medal type
@@ -314,7 +321,7 @@ st.markdown("---")
 st.subheader("📊 Continental Insights")
 
 # Create three columns for insight metrics
-col1, col2, col3 = st.columns(3)
+col1, col2, col3 ,col4 = st.columns(4)
 
 with col1:
     # Find the continent with the most gold medals
@@ -337,6 +344,18 @@ with col2:
     )
 
 with col3:
+    # Count how many countries won at least one gold medal
+    # medals_df['Gold Medal'] > 0 creates a boolean Series
+    # .sum() on a boolean Series counts the number of True values
+    countries_with_gold = (medals_df['Gold Medal'] > 0).sum()
+    st.metric(
+        "🥇 Countries with Gold",
+        countries_with_gold,
+        "nations with at least one gold medal"
+    )
+
+
+with col4:
     # Calculate average medals per country
     avg_medals = medals_df['total_medals'].mean()  # .mean() calculates the average
     st.metric(
