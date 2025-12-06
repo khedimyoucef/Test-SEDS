@@ -11,6 +11,7 @@ import streamlit as st  # The main framework for building this web app
 import plotly.express as px  # For creating interactive charts easily
 import pandas as pd  # For data manipulation with DataFrames
 from utils.data_loader import load_all_data  # Our custom function to load CSV data
+from utils.country_flags import get_flag_html, get_country_with_flag  # For displaying country flags as images
 
 # Configure the page settings - must be called first before any other Streamlit commands
 st.set_page_config(
@@ -60,6 +61,9 @@ def get_country_name(code):
 # .unique() returns distinct values, sorted() puts them in alphabetical order
 available_countries = sorted(medals_total['country_code'].unique())
 
+# Create a lookup for country names
+country_name_lookup = dict(zip(nocs['code'], nocs['country']))
+
 # Create two columns for the country selectors to appear side by side
 col1, col2 = st.columns(2)
 
@@ -68,12 +72,18 @@ with col1:
     # First argument is the label, second is the list of options
     # index=0 means the first option is selected by default
     country_a = st.selectbox("Select Country A", available_countries, index=0)
+    # Display the selected country with its flag
+    country_a_name = country_name_lookup.get(country_a, country_a)
+    st.markdown(f'{get_flag_html(country_a, 32)} **{country_a_name}**', unsafe_allow_html=True)
 
 with col2:
     # For Country B, we try to select a different default than Country A
     # This prevents both dropdowns from starting with the same country
     default_index_b = 1 if len(available_countries) > 1 else 0
     country_b = st.selectbox("Select Country B", available_countries, index=default_index_b)
+    # Display the selected country with its flag
+    country_b_name = country_name_lookup.get(country_b, country_b)
+    st.markdown(f'{get_flag_html(country_b, 32)} **{country_b_name}**', unsafe_allow_html=True)
 
 # =============================================================================
 # VALIDATION CHECK
@@ -131,9 +141,9 @@ else:
         if country_medals.empty:
             return pd.DataFrame()  # Return empty if no medals
         
-        # .value_counts() counts occurrences of each unique value
         # This counts how many medals were won in each discipline
         sport_counts = country_medals['discipline'].value_counts().reset_index()
+        #this sums all the values for each speicific disipline and returns a data frame for each unique : disiplone : total medals pair
         # Rename columns from the default 'index' and 'discipline' to friendlier names
         sport_counts.columns = ['Discipline', 'Medals']
         # Return only the top 5 sports
@@ -175,6 +185,7 @@ else:
     
     # Create a DataFrame structured for a grouped bar chart
     # We need one row for each country + medal type combination
+    # Note: Plotly charts can't render HTML, so we just use country codes
     comparison_data = pd.DataFrame({
         'Country': [country_a, country_a, country_a, country_b, country_b, country_b],
         'Medal Type': ['Gold', 'Silver', 'Bronze', 'Gold', 'Silver', 'Bronze'],
@@ -210,8 +221,8 @@ else:
     s_col1, s_col2 = st.columns(2)
     
     with s_col1:
-        # Markdown with ** makes text bold
-        st.markdown(f"**{country_a} Top Sports**")
+        # Use HTML to display flag image with bold country name
+        st.markdown(f'**{get_country_with_flag(country_a, country_a)} Top Sports**', unsafe_allow_html=True)
         if not top_sports_a.empty:
             # st.dataframe() displays a DataFrame as an interactive table
             # hide_index=True removes the row number column on the left
@@ -220,7 +231,7 @@ else:
             st.write("No medals found.")
             
     with s_col2:
-        st.markdown(f"**{country_b} Top Sports**")
+        st.markdown(f'**{get_country_with_flag(country_b, country_b)} Top Sports**', unsafe_allow_html=True)
         if not top_sports_b.empty:
             st.dataframe(top_sports_b, hide_index=True)
         else:

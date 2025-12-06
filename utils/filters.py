@@ -13,6 +13,7 @@
 # =============================================================================
 
 import streamlit as st  # The main framework for building the filter UI
+from utils.country_flags import get_flag_html  # For displaying country flags
 
 def create_sidebar_filters(data):
     """
@@ -64,6 +65,11 @@ def create_sidebar_filters(data):
         default=[],  # No countries selected by default (show all data)
         help="Filter by country/NOC code"  # Tooltip text on hover
     )
+    
+    # Display selected countries with their flags (if any are selected)
+    if filters['countries']:
+        flags_html = " ".join([f"{get_flag_html(c, 20)}" for c in filters['countries']])
+        st.sidebar.markdown(f"Selected: {flags_html}", unsafe_allow_html=True)
     
     # ==========================================================================
     # CONTINENT FILTER

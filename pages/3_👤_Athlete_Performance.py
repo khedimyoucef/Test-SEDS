@@ -25,6 +25,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from utils.data_loader import load_all_data
 from utils.filters import create_sidebar_filters, get_filter_summary
+from utils.country_flags import get_flag_html  # For displaying country flags as images
 
 # =============================================================================
 # PAGE CONFIGURATION
@@ -113,9 +114,16 @@ if selected_athlete:
         st.markdown(f"**{athlete_info.get('gender', 'N/A')}**")
         
     with col2:
+        # Get the flag image HTML for this athlete's country
+        athlete_flag = get_flag_html(athlete_info.get('country_code', ''), 20)
+        
         # Display the athlete name as a heading
         st.markdown(f"### {athlete_info['name']}")
-        st.markdown(f"**Country:** {athlete_info.get('country', 'N/A')} ({athlete_info.get('country_code', 'N/A')})")
+        # Use HTML to render the flag image alongside country info
+        st.markdown(
+            f"**Country:** {athlete_flag} {athlete_info.get('country', 'N/A')} ({athlete_info.get('country_code', 'N/A')})",
+            unsafe_allow_html=True
+        )
         st.markdown(f"**Continent:** {athlete_info.get('continent', 'N/A')}")
         
     with col3:
