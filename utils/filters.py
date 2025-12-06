@@ -53,6 +53,8 @@ def create_sidebar_filters(data):
     # .unique() returns distinct values, sorted() puts them in order
     # .tolist() converts from numpy array to Python list
     all_countries = sorted(data['nocs']['code'].unique().tolist())
+    # The 'code' attribute is a column directly within the 'nocs' DataFrame,
+    # representing the NOC code for each entry.
     
     # st.sidebar.multiselect() creates a dropdown where users can select multiple items
     # It returns a list of selected items (empty list if nothing selected)

@@ -95,12 +95,12 @@ if filters['continents']:
 
 # Calculate total medals per country (sum of gold + silver + bronze)
 medals_df['total_medals'] = medals_df['Gold Medal'] + medals_df['Silver Medal'] + medals_df['Bronze Medal']
-
+#this is a new cell in the medals df dataframe
 # Add ISO codes for the map - Plotly maps use ISO-3 country codes
 # Our data uses IOC codes (like 'USA', 'GBR') which are similar but not identical
 # The get_iso_code function converts them (e.g., 'GER' -> 'DEU')
 medals_df['iso_code'] = medals_df['country_code'].apply(get_iso_code)
-
+#getting a new cell form the country code by appluing the get iso code from country code
 # =============================================================================
 # SECTION 1: WORLD MEDAL MAP (CHOROPLETH)
 # =============================================================================
@@ -110,8 +110,8 @@ st.markdown("Countries colored by their total medal count")
 # px.choropleth() creates a world map with countries colored by data values
 # A choropleth is a thematic map where areas are shaded based on a variable
 fig_map = px.choropleth(
-    medals_df,  # The DataFrame containing our data
-    locations='iso_code',  # Column with country identifiers
+    medals_df,  # The DataFrame containing our data with the filters applied when needed
+    locations='iso_code',  # Column with country identifiers (as said prev the colorpleth takes ISO 3 codes for locations as input)
     locationmode='ISO-3',  # Tells Plotly we're using ISO alpha-3 codes
     color='total_medals',  # Column that determines the color intensity
     hover_name='country',  # What to show as the main text when hovering

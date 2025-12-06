@@ -1,193 +1,163 @@
 # 🏅 Paris 2024 Olympic Games Dashboard
 
-A comprehensive, interactive Streamlit dashboard analyzing the Paris 2024 Olympic Summer Games data. Built for the LA28 Volunteer Selection Challenge.
+An interactive Streamlit dashboard for exploring Paris 2024 Olympic data. Built as a coursework project for the Software Engineering for Data Science module.
 
-## 📋 Project Overview
+## 📋 What This Project Does
 
-This multi-page Streamlit application provides deep insights into the Paris 2024 Olympics through interactive visualizations and advanced analytics. The dashboard features:
+We built a multi-page dashboard that lets you explore the Paris 2024 Olympics from different angles. You can see which countries dominated, explore athlete demographics, check out the event schedule, and see where everything happened on interactive maps.
 
-- **🏠 Overview Page**: High-level KPIs and medal standings
-- **🗺️ Global Analysis**: Geographic and continental medal distributions
-- **👤 Athlete Performance**: Athlete demographics and top performers
-- **🏟️ Sports & Events**: Event schedules, venues, and sport-specific analysis
+The dashboard has 6 pages:
 
-## 🚀 Quick Start
+- **Overview** - The landing page with key stats and medal standings
+- **Global Analysis** - Maps and charts breaking down medals by continent and country
+- **Head-to-Head** - Compare any two countries side-by-side
+- **Athlete Performance** - Search individual athletes and explore demographics
+- **Sports & Events** - Event schedules and venue information
+- **Daily Highlights** - Day-by-day breakdown of what happened during the Games
 
-### Prerequisites
+## 🚀 Getting Started
 
-- Python 3.8 or higher
-- pip package manager
+### What You Need
 
-### Installation
+- Python 3.8+
+- The packages in `requirements.txt` (streamlit, plotly, pandas)
 
-1. **Clone or download this repository**
-
-2. **Install dependencies**
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Ensure the dataset is in the correct location**
-
-   The application expects the Paris 2024 Olympic dataset to be in:
-
-   ```
-   paris-2024-olympic-summer-games/versions/27/
-   ```
-
-   If you don't have the dataset, download it from:
-   [https://www.kaggle.com/datasets/piterfm/paris-2024-olympic-summer-games](https://www.kaggle.com/datasets/piterfm/paris-2024-olympic-summer-games)
-
-### Running the Application
-
-Run the following command from the project directory:
+### Setup
 
 ```bash
+# Install the dependencies
+pip install -r requirements.txt
+
+# Make sure the dataset folder exists at:
+# paris-2024-olympic-summer-games/versions/27/
+# (Download from Kaggle if you don't have it)
+
+# Run it!
 streamlit run 1_🏠_Overview.py
 ```
 
-The dashboard will open automatically in your default web browser at `http://localhost:8501`
+Opens at `http://localhost:8501`
 
-## 📁 Project Structure
+## 📁 How It's Organized
 
 ```
-TEST_SEDS/
-├── 1_🏠_Overview.py                    # Main landing page
+├── 1_🏠_Overview.py              # Entry point - main dashboard page
 ├── pages/
-│   ├── 2_🗺️_Global_Analysis.py         # Global/geographical analysis
-│   ├── 3_👤_Athlete_Performance.py     # Athlete-focused analysis
-│   └── 4_🏟️_Sports_and_Events.py      # Sports and venues analysis
+│   ├── 2_🗺️_Global_Analysis.py   # World maps, sunburst charts
+│   ├── 3_🆚_Head_to_Head.py      # Country comparison tool
+│   ├── 3_👤_Athlete_Performance.py # Athlete search & demographics
+│   ├── 4_🏟️_Sports_and_Events.py  # Schedule timeline, venue maps
+│   └── 4_📅_Daily_Highlights.py   # Day-by-day medal breakdown
 ├── utils/
-│   ├── __init__.py
-│   ├── data_loader.py                 # Data loading & caching utilities
-│   └── filters.py                     # Global filter components
-├── paris-2024-olympic-summer-games/   # Dataset directory
-├── requirements.txt                    # Python dependencies
-└── README.md                          # This file
+│   ├── data_loader.py            # Loads CSVs with caching
+│   ├── filters.py                # Sidebar filter widgets
+│   ├── ioc_iso_mapping.py        # Country code conversion
+│   └── venue_coordinates.py      # Lat/lon for venue markers
+├── paris-2024-olympic-summer-games/  # The Kaggle dataset
+└── requirements.txt
 ```
 
-## ✨ Key Features
+The emoji prefixes in filenames aren't just for fun - Streamlit uses them to order pages in the sidebar and display nice icons.
 
-### Global Filters (Available on All Pages)
+## 🎨 Why We Built It This Way
 
-- **🌍 Country Filter**: Filter by specific countries/NOCs
-- **🗺️ Continent Filter**: Group analysis by continent (creative feature!)
-- **⚽ Sport Filter**: Focus on specific sports
-- **🏅 Medal Type Filter**: Gold, Silver, Bronze selection
+### The Filtering Problem
 
-### Page-by-Page Features
+One thing we realized early on: Olympic data has a lot of dimensions. Country, continent, sport, medal type, date... users want to slice it different ways. Instead of building separate filter controls on each page, we put everything in a shared sidebar that persists across pages.
 
-#### 1. 🏠 Overview
+The tricky part was continents. The dataset only has NOC codes (like "USA", "GER", "FRA"), not continent info. So we built a manual mapping in `data_loader.py` - about 200 countries mapped to their continents. It's not elegant, but it works, and now you can filter Europe vs Asia vs whatever.
 
-- 5 KPI metrics (Athletes, Countries, Sports, Medals, Events)
-- Global medal distribution (Pie/Donut chart)
-- Top 10 countries medal standings (Bar chart)
+### Choosing Chart Types
 
-#### 2. 🗺️ Global Analysis
+We tried to match chart types to what makes sense for the data:
 
-- **World choropleth map** showing medal counts by country
-- **Sunburst & Treemap** hierarchical views (Continent → Country → Sport)
-- **Continent comparison** bar charts
-- **Top 20 countries** detailed medal breakdown
+- **Choropleth map** for the world view - this is the obvious choice when you want to show "value by country" on a geographic layout. Plotly handles the projections and country shapes automatically, you just need ISO-3 country codes (another reason we have that mapping file).
 
-#### 3. 👤 Athlete Performance
+- **Sunburst and Treemap** for the hierarchy view (Continent → Country → Sport). These show part-to-whole relationships nicely. We put both side-by-side because some people prefer circular layouts and others prefer rectangular. Sunburst is better for seeing the hierarchy, treemap is better for comparing sizes.
 
-- **Athlete profile card** with searchable athlete database
-- **Age distribution** analysis (Box & Violin plots)
-- **Gender distribution** across continents and countries
-- **Top 10 athletes** by medal count
+- **Box and Violin plots** for age distributions - box plots show the quartiles clearly, violin plots show the actual distribution shape. Athletes in shooting sports tend to be older, swimmers tend to be young. These charts make that pattern visible.
 
-#### 4. 🏟️ Sports & Events
+- **Gantt/Timeline chart** for the schedule - when you're showing things with start and end times, a timeline is the natural representation. We limited it to 50 events per view because otherwise it gets unreadable.
 
-- **Event schedule** Gantt/Timeline chart
-- **Medal distribution** by sport (Treemap)
-- **Venue locations** on interactive map
-- Sport-by-sport medal comparisons
+- **Scatter mapbox** for venue locations - we manually looked up lat/lon coordinates for all the Paris venues (and the Tahiti surfing location!) because the dataset didn't include geographic data.
 
-## 🎨 Design Choices
+### Performance Decisions
 
-### Technology Stack
+Streamlit reruns the entire script on every interaction. That would be painfully slow if we re-read all the CSVs each time. So every data loading function uses `@st.cache_data` - the first load takes a second or two, then it's instant.
 
-- **Streamlit**: Chosen for rapid development and built-in interactivity
-- **Plotly**: Interactive visualizations with hover tooltips and drill-down capabilities
-- **Pandas**: Efficient data manipulation and analysis
+We also made a decision to load all data upfront via `load_all_data()` rather than lazy-loading per page. The dataset is small enough (~10 CSV files, largest is maybe 15MB) that it doesn't matter, and it simplifies the code.
 
-### Data Processing
+### Things We'd Do Differently
 
-- **Caching**: Extensive use of `@st.cache_data` for optimal performance
-- **Continent Mapping**: Custom mapping of NOC codes to continents (not in original dataset)
-- **Data Merging**: Strategic joins across multiple CSV files for comprehensive analysis
+If we had more time:
 
-### UX Considerations
+- The IOC-to-ISO code mapping is incomplete. Some countries show up as blanks on the choropleth because we missed them.
+- The venue coordinate lookup is brittle - if the schedule data uses a slightly different venue name (like "South Paris Arena 1" vs "South Paris Arena"), the map won't find it. We added some aliases but probably missed some.
+- We hardcoded "2024" for age calculations. If someone runs this in 2025, the ages will be off by a year.
 
-- **Consistent Layout**: All pages follow the same filter sidebar pattern
-- **Responsive Design**: Works across different screen sizes
-- **Color Coding**: Consistent medal colors (Gold: #FFD700, Silver: #C0C0C0, Bronze: #CD7F32)
-- **Interactive Elements**: Hover tooltips, drill-down charts, and dynamic updates
+## 📊 About the Data
 
-## 📊 Dataset Information
+We're using the [Paris 2024 Olympic Summer Games dataset from Kaggle](https://www.kaggle.com/datasets/piterfm/paris-2024-olympic-summer-games) by piterfm. It includes:
 
-The dashboard uses the following data files:
+| File               | What's In It                                                           |
+| ------------------ | ---------------------------------------------------------------------- |
+| `athletes.csv`     | ~11,000 athletes with name, country, birth date, height/weight, sports |
+| `medals.csv`       | Every medal awarded - who won, what event, which country               |
+| `medals_total.csv` | Aggregated counts: Gold/Silver/Bronze per country                      |
+| `nocs.csv`         | NOC codes to country names                                             |
+| `schedules.csv`    | Event schedule with dates, times, venues                               |
+| `medallists.csv`   | Detailed medalist info                                                 |
+| `venues.csv`       | Venue names (no coordinates though, we added those ourselves)          |
+| `events.csv`       | List of events by sport                                                |
+| `teams.csv`        | Team compositions                                                      |
+| `coaches.csv`      | Coach information                                                      |
 
-- `athletes.csv` - Athlete demographics
-- `coaches.csv` - Coach information
-- `events.csv` - Event details
-- `medals.csv` - Individual medal records
-- `medals_total.csv` - Medal counts by country
-- `medalists.csv` - Medalist information
-- `nocs.csv` - Country/NOC codes
-- `schedule.csv` - Event schedules
-- `teams.csv` - Team information
-- `venues.csv` - Venue details
+The dataset is version 27 - there were updates throughout the Games as results came in.
 
-## 🎯 Meeting Competition Requirements
+## 🎯 Competition Requirements
 
-This dashboard fulfills all mandatory requirements:
+This was built for the SEDS Streamlit Challenge. Here's how we hit the requirements:
 
-✅ Multi-page structure with main entry point and dedicated pages  
-✅ Global filters on every page (Country, Sport, Medal Type, + Continent)  
-✅ All required visualizations implemented  
-✅ Cohesive layout using Streamlit columns and containers  
-✅ Dynamic interactivity with filter-responsive charts  
-✅ Professional design and user experience
+| Requirement          | How We Did It                                                                |
+| -------------------- | ---------------------------------------------------------------------------- |
+| Multi-page structure | 6 pages via Streamlit's `pages/` folder convention                           |
+| Global filters       | Country, Continent, Sport, Medal Type - all in sidebar, all pages            |
+| Required charts      | Choropleth ✓, Bar ✓, Pie ✓, Sunburst ✓, Treemap ✓, Timeline ✓, Scatter map ✓ |
+| Cohesive layout      | Consistent sidebar, consistent header style, columns for side-by-side charts |
+| Interactivity        | Hover tooltips, filter updates, drill-down in hierarchical charts            |
 
-## 👥 Team Information
+## 👥 The Team
 
-This project was created as part of the SEDS Streamlit Challenge for the LA28 Volunteer Selection process.
+- **Khedim Youcef**
+- **Bensetallah Soufiane**
+- **Zitouni Ahmed**
+- **Houari Mohamed**
 
-**Team Members**
+**Group 1** | **Specialty**: AIDS (Artificial Intelligence & Data Science)  
+**Course**: Software Engineering for Data Science  
+**Instructor**: Dr. Belkacem KHALDI
 
-- Khedim Youcef
-- Bensetallah Soufiane
-- Zitouni Ahmed
-- Houari Mohamed
-  **group** 1
-  **sepciality** AIDS
-  **Course**: Software Engineering for Data Science  
-  **Instructor**: Dr. Belkacem KHALDI
+## 🔧 If Something Breaks
 
-## 🔧 Troubleshooting
+**"No module named streamlit"**  
+→ Run `pip install -r requirements.txt`
 
-**Issue**: "No module named 'streamlit'"  
-**Solution**: Make sure you've installed dependencies: `pip install -r requirements.txt`
+**"FileNotFoundError" for CSV files**  
+→ Check that `paris-2024-olympic-summer-games/versions/27/` exists and has the CSVs
 
-**Issue**: "Dataset files not found"  
-**Solution**: Verify the dataset is in `paris-2024-olympic-summer-games/versions/27/`
+**Map shows blank/missing countries**  
+→ That country might be missing from our IOC-to-ISO mapping. Check `utils/ioc_iso_mapping.py`
 
-**Issue**: Page not loading or showing errors  
-**Solution**: Check the terminal for error messages and ensure all CSV files are present
+**Venue markers not showing**  
+→ The venue name might not match our coordinates lookup. Check `utils/venue_coordinates.py`
+
+**Deprecation warnings about `use_container_width`**  
+→ Streamlit is updating their API. The dashboard still works, just with warnings in the terminal.
 
 ## 📝 License
 
-This project is created for educational purposes as part of a university coursework assignment.
-
-## 🙏 Acknowledgments
-
-- Dataset provided by: [piterfm on Kaggle](https://www.kaggle.com/datasets/piterfm/paris-2024-olympic-summer-games)
-- Built with: Streamlit, Plotly, and Pandas
-- Created for: LA28 Volunteer Selection Challenge
+Educational project for university coursework. Dataset is from Kaggle (check their terms for usage).
 
 ---
 
-**Happy Exploring! 🏅**
+Built with Streamlit, Plotly, and Pandas. Data from [piterfm's Kaggle dataset](https://www.kaggle.com/datasets/piterfm/paris-2024-olympic-summer-games).
